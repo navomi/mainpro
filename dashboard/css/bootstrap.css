@@ -186,7 +186,7 @@ table {
 }
 td,
 th {
-  padding: 0;
+  padding: 100;
 }
 /*! Source: https://github.com/h5bp/html5-boilerplate/blob/master/src/css/main.css */
 @media print {
@@ -2247,8 +2247,8 @@ table {
   background-color: transparent;
 }
 caption {
-  padding-top: 8px;
-  padding-bottom: 8px;
+  padding-top: 10px;
+  padding-bottom: 10px;
   color: #777;
   text-align: left;
 }

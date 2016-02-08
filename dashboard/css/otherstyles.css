@@ -1,0 +1,26 @@
+<style >
+table{
+    border-collapse: collapse;
+    width: 70%;
+}
+
+th, td {
+    text-align: left;
+    padding: 10px;
+}
+
+tr:nth-child(even){background-color: #f2f2f2}
+
+table tr th {
+    background-color: #1abc9c;
+    padding: 12px !important;
+    color: white !important;
+
+    
+}
+button{
+	background-color: #ecf0f1;
+	width:50px;
+	
+}
+</style>

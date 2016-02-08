@@ -53,7 +53,7 @@ include("head.php");
                 </div>
 <br>
                 <div>
-                <label > Age:</label>
+                <label > Date Of Birth:</label>
                 <br>
                 <input type="date" name="DOB" max="2001-12-31" >
                 </div>
@@ -160,6 +160,7 @@ include("head.php");
         {
           $message = "Succesfully Registered";
                 echo "<script type='text/javascript'>alert('$message');</script>";
+               
 
         }
         ?>

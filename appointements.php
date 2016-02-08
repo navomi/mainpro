@@ -1,11 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-
-
-
 <?php include('connection.php'); global $conn ?> 
-
-
+<?php session_start(); ?>
 <head>
 
     <meta charset="utf-8">
@@ -28,6 +24,7 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <link href="dashboard/css/otherstyles.css" rel="stylesheet">
 
 </head>
 
@@ -39,7 +36,7 @@
         <div id="sidebar-wrapper">
             <ul class="sidebar-nav">
                 <li class="sidebar-brand">
-                    <a href="#">
+                      <a href="#">
                       <font size="6">  MyHealthPal </font>
                     </a>
                 </li>
@@ -49,11 +46,12 @@
                  <li data-toggle="collapse" href="#collapse1" ><a>Medical Parameters</a> </li>
                     <div id="collapse1" class="panel-collapse collapse">
                         <ul calss="sidebar-nav" >
-                             <li > <a href="blood_pressure.php">Blood Pressure </a></li>
-                            <li ><a href="blood_glucose.php" >Blood Glucose </a></li>
-                            <li ><a href="weight.php" >Weight </a></li>
-                            <li ><a href="height.php" >Height </a></li>
-                            <li ><a href="heart_rate.php" >Heart Rate </a></li>
+                            <li > <a href="progpre.php">Blood Pressure </a></li>
+                            <li ><a href="progglu.php" >Blood Glucose </a></li>
+                            <li ><a href="progwei.php" >Weight </a></li>
+                            <li ><a href="proghei.php" >Height </a></li>
+                            <li ><a href="proghea.php" >Heart Rate </a></li>
+                        </ul>
                     </div>
                 <li>
                     <a href="treatments.php">Treatments</a>
@@ -87,49 +85,83 @@
                 
             </ul>
         </div>
-           <div class="container">
-    <form action="" method="POST">
-    <br><br>
-    <fieldset>
-                <legend > <h2>Appointment </h2></legend>
-    
-                <div>
-                <label style="margin-left:10px;" >Appointment Date</label>
-                <br>
-                     <input type="date" name="app_date" style="margin-left:10px;" />
-                </div>
-<br>
-                <div>
-                <label style="margin-left:10px;" >Time of the appointment</label>
-                <br>
-                     <input type="time" name="app_time" style="margin-left:10px;" />
-                </div>
-<br>
-                <div>
-                <label style="margin-left:10px;" > Doctors Name </label>
-                <br>
-                    <input type="text" name="doctor" style="margin-left:10px;"> 
-                </div>
-<br>
-                 <div>
-                <label style="margin-left:10px;" > hospital </label>
-                <br>
-                    <input type="text" name="hospital" style="margin-left:10px;"> 
-                </div>
-<br>
-                <div>
-                <label style="margin-left:10px;" > Reason </label>
-                <br>
-                    <textarea class=".form-control:focus" rows="7" cols="70" name="reason" style="margin-left:10px;"> </textarea> 
-                </div>
-<br>
+        <!-- /#sidebar-wrapper -->
 
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <fieldset>
+   
+                        <legend > 
+                            <h2>Appointment </h2> ADD <button><a href="appoint.php">+</a></button>
 
-                <input type="submit" style="margin-left:10px;" name="submit" value="submit" class="btn btn-default"/>
+                        </legend>
+                        </fieldset>
+                       <!-- <p>This template has a responsive menu toggling system. The menu will appear collapsed on smaller screens, and will appear non-collapsed on larger screens. When toggled using the button below, the menu will appear/disappear. On small screens, the page content will be pushed off canvas.</p>
+                        <p>Make sure to keep all page content within the <code>#page-content-wrapper</code>.</p>
+                        <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a>-->
+                         <?php
+                            function getappointmentdetails($id) 
+                            {
+                                global $conn;
+                                if ($stmt = $conn->prepare("SELECT app_date, app_time, doctor_name, hospital, reason  FROM `Appointment`  where id = ? ")) 
+                                     {
+                                        $stmt->bind_param("i", $id);
+                                        $stmt->execute();
+                                        $stmt->bind_result($app_date, $app_time, $doctor_name, $hospital, $reason);
+                                        while ($stmt->fetch()) 
+                                        {
+                                        $rows[] = array('app_date' => $app_date, 'app_time' => $app_time, 'doctor_name' => $doctor_name, 'hospital' => $hospital, 'reason' => $reason );
+                                        }
+                                        $stmt->close();
+                                        return $rows;
+
+                            }
+                                else 
+                                    {
+                                        printf("Error message: %s\n", $conn->error);
+                                        }
+                                    }
+                            ?>
+                            <div class="panel-body bio-graph-info">
+                                          <h1>Details</h1>
+                                          <div class="row">
+                                          <?php $appointment = getappointmentdetails($_SESSION['id']);?>
+                                              <div class="bio-row">
+                                              <table class="table table-stripped" class="final" style= "margin:10px;">
+                                              <tr> 
+                                                <th>Date of the Appointment</th>
+                                                <th>Time of the Appointment</th>
+                                                <th>Doctors Name</th>
+                                                <th>Hospital</th>
+                                                <th>Reason</th>
+                                                
+                                                
+                                               </tr>
+                                                <?php
+                                                    foreach ($appointment as $single) {
+                                                        echo "<tr>";
+                                                        echo "<td>$single[app_date]</td>";
+                                                        echo "<td>$single[app_time]</td>";
+                                                        echo "<td>$single[doctor_name] </td>";
+                                                        echo "<td>$single[hospital] </td>";
+                                                        echo "<td>$single[reason] </td>";
+                                                        echo "</tr>";
+                                                    }
+                                                ?>
+                                                </div>
+                                                </table>
+                                          </div>
+                                      </div>
+                    </div>
+                    </div>
                 </div>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
 
-    </fieldset>
-    </form>
     </div>
     <!-- /#wrapper -->
 
@@ -146,45 +178,7 @@
         $("#wrapper").toggleClass("toggled");
     });
     </script>
- 
-
-<?php
-
-            if(isset($_POST['submit']))
-                {
-                  $app_date = $_POST['app_date'];   
-                  $app_time = $_POST['app_time'];         
-                  $doctor = $_POST['doctor'];
-                  $hospital = $_POST['hospital'];
-                  $reason = $_POST['reason'];
-
-
-            
-                  if($stmt =$conn->prepare("INSERT INTO appointment(id, app_date, app_time, doctor_name, hospital, reason) values(?,?,?,?,?,?)"))
-                   {
-                    $stmt->bind_param('isssss', $_SESSION['id'],$app_date, $app_time, $doctor, $hospital, $reason  );
-                    $result = $stmt->execute();
-                    $stmt->close();
-                echo $result;
-                  }
-                  else
-                  {
-                   echo "error with insertion ";
-                  }  
-
-                }
-           
-               
-        ?>
-
-        <?php 
-        if($result)
-        {
-          $message = "Succesfull";
-                echo "<script type='text/javascript'>alert('$message');</script>";
-
-        }
-        ?>
 
 </body>
+
 </html>

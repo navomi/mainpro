@@ -44,11 +44,11 @@
                  <li data-toggle="collapse" href="#collapse1" ><a>Medical Parameters</a> </li>
                     <div id="collapse1" class="panel-collapse collapse">
                         <ul calss="sidebar-nav" >
-                            <li > <a href="blood_pressure.php">Blood Pressure </a></li>
-                            <li ><a href="blood_glucose.php" >Blood Glucose </a></li>
-                            <li ><a href="weight.php" >Weight </a></li>
-                            <li ><a href="height.php" >Height </a></li>
-                            <li ><a href="heart_rate.php" >Heart Rate </a></li>
+                            <li > <a href="progpre.php">Blood Pressure </a></li>
+                            <li ><a href="proglu.php" >Blood Glucose </a></li>
+                            <li ><a href="progwei.php" >Weight </a></li>
+                            <li ><a href="proghei.php" >Height </a></li>
+                            <li ><a href="proghea.php" >Heart Rate </a></li>
                         </ul>
                     </div>
                 <li>

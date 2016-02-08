@@ -1,10 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
-
-
-
-<?php include('connection.php'); global $conn ?>
-
+<?php include('connection.php'); global $conn ?> 
+<?php session_start(); ?>
 <head>
 
     <meta charset="utf-8">
@@ -27,6 +24,7 @@
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+    <link href="dashboard/css/otherstyles.css" rel="stylesheet">
 
 </head>
 
@@ -38,7 +36,7 @@
         <div id="sidebar-wrapper">
             <ul class="sidebar-nav">
                 <li class="sidebar-brand">
-                     <a href="#">
+                      <a href="#">
                       <font size="6">  MyHealthPal </font>
                     </a>
                 </li>
@@ -48,11 +46,11 @@
                  <li data-toggle="collapse" href="#collapse1" ><a>Medical Parameters</a> </li>
                     <div id="collapse1" class="panel-collapse collapse">
                         <ul calss="sidebar-nav" >
-                             <li > <a href="blood_pressure.php">Blood Pressure </a></li>
-                            <li ><a href="blood_glucose.php" >Blood Glucose </a></li>
-                            <li ><a href="weight.php" >Weight </a></li>
-                            <li ><a href="height.php" >Height </a></li>
-                            <li ><a href="heart_rate.php" >Heart Rate </a></li>
+                            <li > <a href="progpre.php">Blood Pressure </a></li>
+                            <li ><a href="progglu.php" >Blood Glucose </a></li>
+                            <li ><a href="progwei.php" >Weight </a></li>
+                            <li ><a href="proghei.php" >Height </a></li>
+                            <li ><a href="proghea.php" >Heart Rate </a></li>
                         </ul>
                     </div>
                 <li>
@@ -84,89 +82,91 @@
                     <a href="logout.php">Logout</a>
                 </li>
                 
+                
             </ul>
         </div>
-           <div class="container">
-    <form action="" method="POST" enctype="multipart/form-data">
-    <br><br>
-    <fieldset>
-                <legend > <h2>Prescription </h2></legend>
+        <!-- /#sidebar-wrapper -->
 
-                 <div>
-                <label style="margin-left:10px;" > Name Of The Prescription  </label>
-                <br>
-                    <input type="text" name="name" style="margin-left:10px;"> 
-                </div>
-<br>    
-                <div>
-                <label style="margin-left:10px;" > Strength Of The Doasge  </label>(Ex:1..1000)
-                <br>
-                    <input type="text" name="strength" style="margin-left:10px;"> 
-                <select name ="type" style="height:25px;">
-                    <option value="mg">mg </option>
-                    <option value="ml">ml </option>
-                    <option value="drops">drops </option>
-                </select>
-                </div>
-<br>    
-                <div>
-                <label style="margin-left:10px;" > Dosage Amount  </label>
-                <br>
-                    <select name ="amount" style="margin-left:10px; height:25px ">
-                    <option value="1">once daily</option>
-                    <option value="2">twice daily </option>
-                    <option value="3">thrice daily </option>
-                    <option value="4">four daily</option>
-                    <option value="5">five daily </option>
-                    <option value="6">once weekly </option>
-                    <option value="7">once monthly </option>
-                    <option value="8">others </option>
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <fieldset>
+   
+                        <legend > 
+                            <h2>Prescription </h2> ADD <button><a href="pres.php">+</a></button>
 
-                </select>
-                </div>
-                
-<br>    
-                <div>
-                <label style="margin-left:10px;" > Prescribed By </label>
-                <br>
-                    <input type="text" name="doctor" style="margin-left:10px;"> 
-                </div>
-<br>    
-                <div>
-                <label style="margin-left:10px;" > hospital </label>
-                <br>
-                    <input type="text" name="hospital" style="margin-left:10px;"> 
-                </div>
-<br>
-                <div>
-                <label style="margin-left:10px;" > Instruction </label>
-                <br>
-                    <textarea class=".form-control:focus" rows="5" cols="70" name="instruction" style="margin-left:10px;"> </textarea> 
-                </div>
-<br>
-                <div>
-                <label style="margin-left:10px;" > Start Date  </label>
-            
-                     <input type="date" name="sdate" style="margin-left:10px;" />
-                
-                <label style="margin-left:10px;" >Last Date</label>
-                
-                     <input type="date" name="ldate" style="margin-left:10px;" />
-                </div>
+                        </legend>
+                        </fieldset>
+                       <!-- <p>This template has a responsive menu toggling system. The menu will appear collapsed on smaller screens, and will appear non-collapsed on larger screens. When toggled using the button below, the menu will appear/disappear. On small screens, the page content will be pushed off canvas.</p>
+                        <p>Make sure to keep all page content within the <code>#page-content-wrapper</code>.</p>
+                        <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a>-->
+                         <?php
+                            function getprescriptiondetails($id) 
+                            {
+                                global $conn;
+                                if ($stmt = $conn->prepare("SELECT start_date, end_date, prescribed_by, instruction, hospital, reason, strength, metric, dosage_amount  FROM `prescription` p LEFT JOIN `medicine` m ON p.pres_id=m.pres_id where p.id = ? ")) 
+                                     {
+                                        $stmt->bind_param("i", $id);
+                                        $stmt->execute();
+                                        $stmt->bind_result($start_date, $end_date, $prescribed_by, $instruction, $hospital, $reason, $strength, $metric, $dosage_amount);
+                                        while ($stmt->fetch()) 
+                                        {
+                                        $rows[] = array('start_date' => $start_date, 'end_date' => $end_date, 'prescribed_by' => $prescribed_by, 'instruction' => $instruction, 'hospital' => $hospital, 'reason' => $reason, 'strength' => $strength, 'metric' => $metric, 'dosage_amount' => $dosage_amount );
+                                        }
+                                        $stmt->close();
+                                        return $rows;
 
-<br>
-                <div>
-                <label style="margin-left:10px;" > Reason </label>
-                <br>
-                    <textarea class=".form-control:focus" rows="7" cols="70" name="reason" style="margin-left:10px;"> </textarea> 
+                            }
+                                else 
+                                    {
+                                        printf("Error message: %s\n", $conn->error);
+                                        }
+                                    }
+                            ?>
+                            <div class="panel-body bio-graph-info">
+                                          <h1>Details</h1>
+                                          <div class="row">
+                                          <?php $prescription = getprescriptiondetails($_SESSION['id']);?>
+                                              <div class="bio-row">
+                                              <table class="table table-stripped" class="final" style= "margin:10px;">
+                                              <tr> 
+                                                <th>Date Started</th>
+                                                <th>End Date</th>
+                                                <th>Doctor</th>
+                                                <th>Hospital</th>
+                                                <th>Reason</th>
+                                                <th>Strength</th>
+                                                <th>Dosage Amount</th>
+                                                <th>instruction</th>
+                                                
+                                               </tr>
+                                                <?php
+                                                    foreach ($prescription as $single) {
+                                                        echo "<tr>";
+                                                        echo "<td>$single[start_date]</td>";
+                                                        echo "<td>$single[end_date]</td>";
+                                                        echo "<td>$single[prescribed_by] </td>";
+                                                        echo "<td>$single[hospital] </td>";
+                                                        echo "<td>$single[reason] </td>";
+                                                        echo "<td>$single[strength] $single[metric]</td>";
+                                                        echo "<td>$single[dosage_amount]  </td>";
+                                                        echo "<td>$single[instruction] </td>";
+                                                        echo "</tr>";
+                                                    }
+                                                ?>
+                                                </div>
+                                                </table>
+                                          </div>
+                                      </div>
+                    </div>
+                    </div>
                 </div>
-<br>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
 
-                <input type="submit" style="margin-left:10px;" name="submit" value="submit" class="btn btn-default"/>
-                </div>
-
-    </fieldset>
-    </form>
     </div>
     <!-- /#wrapper -->
 
@@ -183,58 +183,6 @@
         $("#wrapper").toggleClass("toggled");
     });
     </script>
-
-    <?php
-        if(isset($_POST['submit'])) {
-            $name = $_POST['name'];
-            $strength = $_POST['strength'];
-            $type = $_POST['type'];
-            $amount = $_POST['amount'];
-            $instruction = $_POST['instruction'];
-            $sdate = $_POST['sdate'];
-            $ldate = $_POST['ldate'];
-            $doctor = $_POST['doctor'];
-            $hospital = $_POST['hospital'];
-            $reason = $_POST['reason'];
-
-            if ($stmtt=$conn->prepare("INSERT INTO prescription (pres_name, id, start_date, end_date, prescribed_by, instruction, hospital, reason) values (?,?,?,?,?,?,?,?)")) {
-                echo "hi";
-                $stmtt->bind_param('sissssss', $name, $_SESSION['id'], $sdate, $ldate, $doctor, $instruction, $hospital, $reason);
-                $result = $stmtt->execute();
-                $stmtt->close();
-                if ($result) {
-                    if ($stmt1 = $conn->prepare("SELECT pres_id from prescription WHERE pres_name = ? LIMIT 1")) {
-                      $stmt1->bind_param('s', $name);
-                      $stmt1->execute();
-                      $stmt1->bind_result($pres_id);
-                      while ($stmt1->fetch())
-                        $row = array('pres_id' => $pres_id);
-                      $stmt1->close();
-                    }
-                    if($stmt =$conn->prepare("INSERT INTO medicine(pres_id, strength, metric, dosage_amount) values(?,?,?,?)")) {
-                    $stmt->bind_param('iiss', $row['pres_id'], $strength, $type, $amount);
-                    $result = $stmt->execute();
-                    $stmt->close();
-                    } else {
-                        echo "<script type='text/javascript'>alert('1');</script>";
-                    }
-                }
-            }
-            else
-            {
-                echo "<script type='text/javascript'>alert('2');</script>";
-            }      
-        }    
-    ?>
-
-        <?php 
-        if($result)
-        {
-          $message = "Succesfull";
-                echo "<script type='text/javascript'>alert('$message');</script>";
-
-        }
-        ?>
 
 </body>
 
