@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<?php include('connection.php'); global $conn ?> 
+<?php include('side.php'); ?>
+<?php session_start(); ?>
+<head>
+<?php
+function getUserdetails($id)
+{
+    global $conn;
+    if ($stmt = $conn->prepare("SELECT fname, phone, email, gender, age, address, emergency, lname  FROM `user` where id = ? ")) 
+         {
+            //echo "hi";
+            $stmt->bind_param("i", $id);
+            $stmt->execute();
+            $stmt->bind_result($fname, $phone, $email, $gender, $age, $address, $emergency, $lname);
+            while ($stmt->fetch()) 
+            {
+            $rows[] = array('fname' => $fname, 'phone' => $phone, 'email' => $email, 'gender' => $gender, 'age' => $age, 'address' => $address, 'emergency' =>$emergency, 'lname' => $lname);
+            //print_r($rows);
+            }
+            $stmt->close();
+            return $rows;
+           
+
+}
+    else 
+        {
+            printf("Error message: %s\n", $conn->error);
+        }
+}
+
+?>
+    
+                            <?php $userdeets = getUserdetails($_SESSION['id']);?>
+
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title> MyHealthPal </title>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="dashboard/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="dashboard/css/simple-sidebar.css" rel="stylesheet"> 
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+   
+        <!-- /#sidebar-wrapper -->
+
+        <!-- Page Content -->
+        <div id="page-content-wrapper">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1>Your Details</h1>
+                        <form>
+                        <fieldset>
+                            <legend>
+                              <a href="edit.php"> edit </a>
+                            </legend>
+                            <legend>
+                               <font size="3" color="#2980b9"> 
+                               <label style="margin-left:40px;" > First Name </label>: <?php echo $userdeets[0]['fname']; ?> <label style="margin-left:150px;"> Last Name </label>: <?php echo $userdeets[0]['lname'] ?><br> 
+                               <label style="margin-left:40px;" > phone Number </label>: <?php echo $userdeets[0]['phone']; ?> <label style="margin-left:80px;"> Emergency Contact </label>: <?php echo $userdeets[0]['emergency'] ?><br>
+                               <label style="margin-left:40px;" > Date Of Birth </label>: <?php echo $userdeets[0]['age']; ?> <label style="margin-left:100px;"> Address </label>: <?php echo $userdeets[0]['address'] ?><br>
+                               <label style="margin-left:40px;" > Gender </label>: <?php echo $userdeets[0]['gender']; ?> <label style="margin-left:175px;"> Email_id </label>: <?php echo $userdeets[0]['email'] ?><br>
+
+                               </font>
+                            </legend>
+                        </fieldset>
+                        </form>
+                        <div class="container">
+  
+                        </div>
+                       
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- /#page-content-wrapper -->
+    <!-- /#wrapper -->
+
+    <!-- jQuery -->
+    <script src="dashboard/js/jquery.js"></script>
+    <!-- Bootstrap Core JavaScript -->
+    <script src="dashboard/js/bootstrap.min.js"></script>
+
+    <!-- Menu Toggle Script -->
+    <script>
+    $("#menu-toggle").click(function(e) {
+        e.preventDefault();
+        $("#wrapper").toggleClass("toggled");
+    });
+    </script>
+
+</body>
+
+</htm
